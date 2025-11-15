@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Definições
+#define TAMANHO 5
+#define TOTAL_NAVIOS 3
+
+// Símbolos (usando inteiros)
+#define AGUA 0
+#define NAVIO 1
+#define ACERTO 2
+#define ERRO 3
+
+// --- Função Principal ---
+
+int main() {
+    int tabuleiro[TAMANHO][TAMANHO];
+    int acertos = 0;
+    int linha, coluna;
+    srand(time(NULL));
+
+    // 1. Inicializa o Tabuleiro com ÁGUA (0)
+    for (int i = 0; i < TAMANHO; i++) {
+        for (int j = 0; j < TAMANHO; j++) {
+            tabuleiro[i][j] = AGUA;
+        }
+    }
+
+    // 2. Posiciona os Navios (1)
+    int naviosColocados = 0;
+    while (naviosColocados < TOTAL_NAVIOS) {
+        linha = rand() % TAMANHO;
+        coluna = rand() % TAMANHO;
+
+        if (tabuleiro[linha][coluna] == AGUA) {
+            tabuleiro[linha][coluna] = NAVIO;
+            naviosColocados++;
+        }
+    }
+    
+    printf("🚢 Batalha Naval Simples (5x5) 🚢\n");
+    printf("Afunde os %d navios. Digite -1 para sair.\n\n", TOTAL_NAVIOS);
+
+    // 3. Loop do Jogo
+    while (acertos < TOTAL_NAVIOS) {
+        printf("Acertos: %d/%d\n", acertos, TOTAL_NAVIOS);
+        
+        printf("Digite a linha (0 a %d, -1 para sair): ", TAMANHO - 1);
+        scanf("%d", &linha);
+        
+        if (linha == -1) break; // Sair do jogo
+        
+        printf("Digite a coluna (0 a %d): ", TAMANHO - 1);
+        scanf("%d", &coluna);
+
+        // Validação básica
+        if (linha < 0 || linha >= TAMANHO || coluna < 0 || coluna >= TAMANHO) {
+            printf("⚠️ Coordenadas fora do limite. Tente novamente.\n");
+            continue;
+        }
+
+        // Verifica o que há na posição
+        if (tabuleiro[linha][coluna] == NAVIO) {
+            printf("💥 ACERTOU! Navio afundado!\n");
+            tabuleiro[linha][coluna] = ACERTO; // Marca como acertado
+            acertos++;
+        } 
+        else if (tabuleiro[linha][coluna] == AGUA) {
+            printf("💧 ÁGUA! Você errou.\n");
+            tabuleiro[linha][coluna] = ERRO; // Marca como erro (tiro na água)
+        } 
+        else { // Já atirou
+            printf("🛑 Você já atirou nessas coordenadas. Tente novamente.\n");
+        }
+        
+        // (O tabuleiro não é exibido em cada rodada para manter a simplicidade extrema)
+        printf("\n");
+    }
+
+    // 4. Fim do Jogo
+    if (acertos == TOTAL_NAVIOS) {
+        printf("🎉 PARABÉNS! Você VENCEU e afundou todos os navios!\n");
+    } else {
+        printf("Fim de jogo.\n");
+    }
+
+    return 0;
+}
